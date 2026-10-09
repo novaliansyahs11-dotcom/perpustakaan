@@ -17,13 +17,14 @@ class DatabaseSeeder extends Seeder
         $admin = User::updateOrCreate(
             ['email' => 'admin@perpus.test'],
             [
-                'name' => 'Petugas Perpustakaan',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'phone' => '081234567890',
-                'id_card_type' => 'ktp',
-                'id_card_number' => '3274010101900001',
-                'is_active' => true,
+                    'name' => 'Petugas Perpustakaan',
+                    'password' => Hash::make('password'),
+                    'role' => 'admin',
+                    'phone' => '081234567890',
+                    'id_card_type' => 'ktp',
+                    'id_card_number' => '3274010101900001',
+                    'email_verified_at' => now(),
+                    'is_active' => true,
             ]
         );
 
