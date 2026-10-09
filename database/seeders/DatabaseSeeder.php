@@ -13,18 +13,18 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Buat Akun Admin & Member Netral
+        // 1. Buat Akun Admin & Member Netral (Otomatis Terverifikasi)
         $admin = User::updateOrCreate(
             ['email' => 'admin@perpus.test'],
             [
-                    'name' => 'Petugas Perpustakaan',
-                    'password' => Hash::make('password'),
-                    'role' => 'admin',
-                    'phone' => '081234567890',
-                    'id_card_type' => 'ktp',
-                    'id_card_number' => '3274010101900001',
-                    'email_verified_at' => now(),
-                    'is_active' => true,
+                'name' => 'Petugas Perpustakaan',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+                'phone' => '081234567890',
+                'id_card_type' => 'ktp',
+                'id_card_number' => '3274010101900001',
+                'email_verified_at' => now(),
+                'is_active' => true,
             ]
         );
 
@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
                     'phone' => $m['phone'],
                     'id_card_type' => $m['type'],
                     'id_card_number' => $m['id_num'],
+                    'email_verified_at' => now(), // <-- Otomatis terverifikasi untuk setiap akun mahasiswa
                     'is_active' => true,
                 ]
             );
