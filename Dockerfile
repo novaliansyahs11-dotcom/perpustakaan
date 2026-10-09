@@ -22,9 +22,6 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-# Buat symlink storage agar gambar bisa diakses publik secara live
-RUN php artisan storage:link
-
 # Hak akses folder storage dan cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
@@ -33,5 +30,5 @@ COPY .render/nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-# Perbaikan perintah CMD untuk menjalankan Nginx dan PHP-FPM
-CMD service nginx start && php-fpm
+# Jalankan storage:link saat startup container, lalu aktifkan Nginx dan PHP-FPM
+CMD php artisan storage:link && service nginx start && php-fpm
