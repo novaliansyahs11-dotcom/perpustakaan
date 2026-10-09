@@ -10,7 +10,7 @@
     </div>
 </div>
 
-{{-- Alert Notifikasi Status Pembuatan Tiket QR --}}
+{{-- Alert Notifikasi --}}
 @if(session('success'))
     <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
         <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
@@ -32,7 +32,7 @@
     </div>
 @endif
 
-<form action="{{ route('member.browse') }}" method="GET" class="card border-0 shadow-sm p-3 mb-4">
+<form action="{{ Route::has('catalog.public') && Auth::guest() ? route('catalog.public') : route('member.browse') }}" method="GET" class="card border-0 shadow-sm p-3 mb-4">
     <div class="row g-2">
         <div class="col-md-7">
             <input type="text" name="search" class="form-control" placeholder="Cari judul buku, penulis, atau nomor ISBN..." value="{{ request('search') }}">
@@ -59,13 +59,22 @@
         // Ambil unit eksemplar fisik yang siap dipinjam di rak
         $availableCopies = $book->copies->where('status', 'available');
         $availableCount = $availableCopies->count();
-        $firstAvailableCopy = $availableCopies->first();
+
+        // Tentukan URL detail buku berdasarkan status login/route yang tersedia
+        $detailRoute = Route::has('catalog.show') && Auth::guest() 
+            ? route('catalog.show', $book->id) 
+            : (Route::has('member.books.show') ? route('member.books.show', $book->id) : route('catalog.show', $book->id));
     @endphp
     <div class="col-md-4">
         <div class="card h-100 border-0 shadow-sm overflow-hidden d-flex flex-column">
             <div style="height: 200px; background-color: #212529;" class="d-flex align-items-center justify-content-center overflow-hidden position-relative">
                 @if($book->cover_image)
-                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-100 h-100 object-fit-cover">
+                    @php
+                        $coverUrl = \Illuminate\Support\Str::startsWith($book->cover_image, ['http://', 'https://'])
+                            ? $book->cover_image
+                            : asset('storage/' . $book->cover_image);
+                    @endphp
+                    <img src="{{ $coverUrl }}" alt="{{ $book->title }}" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src='https://placehold.co/400x600?text=No+Cover';">
                 @else
                     <div class="text-center text-secondary">
                         <i class="bi bi-book fs-1 mb-1 d-block"></i>
@@ -77,33 +86,18 @@
                 </span>
             </div>
             <div class="card-body d-flex flex-column p-3">
-                <span class="badge bg-secondary mb-2 align-self-start">{{ $book->category->name }}</span>
+                <span class="badge bg-secondary mb-2 align-self-start">{{ $book->category->name ?? 'Umum' }}</span>
                 <h5 class="fw-bold mb-1 fs-6 text-truncate" title="{{ $book->title }}">{{ $book->title }}</h5>
                 <p class="text-muted small mb-2">Penulis: {{ $book->author }} ({{ $book->publication_year }})</p>
                 <p class="small text-secondary flex-grow-1">{{ Str::limit($book->description ?? 'Tidak ada sinopsis ringkas.', 90) }}</p>
                 
                 <hr class="my-2">
                 
-                <div class="d-grid gap-2">
-                    {{-- Tombol Lihat Detail Buku --}}
-                    <a href="{{ route('member.books.show', $book->id) }}" class="btn btn-sm btn-outline-primary">
+                <div class="d-grid">
+                    {{-- Tombol Lihat Detail Buku (Selalu Tampil) --}}
+                    <a href="{{ $detailRoute }}" class="btn btn-sm btn-outline-primary w-100 fw-semibold">
                         <i class="bi bi-eye me-1"></i> Lihat Detail Buku
                     </a>
-
-                    {{-- Tombol Fitur Baru: Pinjam Mandiri (Token QR 1 Jam) --}}
-                    @if($availableCount > 0 && $firstAvailableCopy)
-                        <form action="{{ route('member.loan.token', $firstAvailableCopy->id) }}" method="POST" 
-                              onsubmit="return confirm('Ambil tiket QR pinjam mandiri untuk buku ini?\n\nPerhatian: Tiket barcode hanya berlaku selama 60 menit sejak dibuat. Segera bawa ke meja petugas untuk discan.');">
-                            @csrf
-                            <button type="submit" class="btn btn-sm btn-success w-100 fw-semibold shadow-sm">
-                                <i class="bi bi-qr-code-scan me-1"></i> Pinjam Mandiri (QR 1 Jam)
-                            </button>
-                        </form>
-                    @else
-                        <button type="button" class="btn btn-sm btn-secondary w-100" disabled>
-                            <i class="bi bi-x-circle me-1"></i> Buku Tidak Tersedia di Rak
-                        </button>
-                    @endif
                 </div>
             </div>
         </div>

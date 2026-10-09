@@ -48,16 +48,26 @@
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Nomor Handphone / WhatsApp</label>
-                <input type="text" name="phone" value="{{ old('phone') }}" required 
-                    placeholder="08xxxxxxxxxx"
-                    class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-medium text-sm">+</span>
+                    <input type="text" 
+                        inputmode="numeric" 
+                        name="phone" 
+                        id="phone"
+                        value="{{ old('phone') }}" 
+                        required 
+                        maxlength="14"
+                        oninput="formatPhoneNumber(this)"
+                        placeholder="6281234567890 (11-14 digit)"
+                        class="w-full pl-8 pr-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
+                </div>
             </div>
 
-            <!-- Bagian yang sebelumnya hilang: Jenis & Nomor Identitas -->
+            <!-- Jenis & Nomor Identitas Presisi -->
             <div class="grid grid-cols-5 gap-3">
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Kartu</label>
-                    <select name="id_card_type" required
+                    <select name="id_card_type" id="id_card_type" required onchange="updateIdValidation()"
                         class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition bg-white">
                         <option value="ktm" {{ old('id_card_type') == 'ktm' ? 'selected' : '' }}>KTM (NIM)</option>
                         <option value="ktp" {{ old('id_card_type') == 'ktp' ? 'selected' : '' }}>KTP (NIK)</option>
@@ -66,8 +76,13 @@
                 </div>
                 <div class="col-span-3">
                     <label class="block text-sm font-medium text-slate-700 mb-1">Nomor Identitas</label>
-                    <input type="text" name="id_card_number" value="{{ old('id_card_number') }}" required 
-                        placeholder="NIM / NIK / No. SIM"
+                    <input type="text" 
+                        inputmode="numeric" 
+                        name="id_card_number" 
+                        id="id_card_number" 
+                        value="{{ old('id_card_number') }}" 
+                        required 
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
                 </div>
             </div>
@@ -98,5 +113,38 @@
             </p>
         </form>
     </div>
+
+    <!-- Script Format Nomor Telepon & Pembatasan Digit Kartu -->
+    <script>
+    function formatPhoneNumber(input) {
+        let val = input.value.replace(/[^0-9]/g, '');
+        if (val.startsWith('08')) {
+            val = '628' + val.substring(2);
+        } else if (val.startsWith('0')) {
+            val = '62' + val.substring(1);
+        }
+        input.value = val;
+    }
+
+    function updateIdValidation() {
+        const type = document.getElementById('id_card_type').value;
+        const input = document.getElementById('id_card_number');
+
+        if (type === 'ktp') {
+            input.placeholder = '16 digit NIK KTP';
+            input.maxLength = 16;
+        } else if (type === 'sim') {
+            input.placeholder = '12 digit No. SIM';
+            input.maxLength = 12;
+        } else {
+            input.placeholder = '10-14 digit NIM KTM';
+            input.maxLength = 14;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateIdValidation();
+    });
+    </script>
 </body>
 </html>

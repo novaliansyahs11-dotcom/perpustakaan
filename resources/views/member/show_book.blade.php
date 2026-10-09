@@ -3,18 +3,25 @@
 @section('title', $book->title . ' - Perpustakaan')
 
 @section('content')
+@php
+    // Inisialisasi otomatis eksemplar fisik yang berstatus tersedia ('available')
+    $availableCopies = $book->copies->where('status', 'available');
+    $availableCopiesCount = $availableCopies->count();
+    $availableCopy = $availableCopies->first();
+@endphp
+
 <div class="d-flex justify-content-between align-items-center pb-2 mb-4 border-bottom">
     <div>
         <h1 class="h3 fw-bold mb-0">{{ $book->title }}</h1>
         <small class="text-muted">Detail katalog koleksi dan pantau ketersediaan eksemplar fisik di rak.</small>
     </div>
-    <a href="{{ route('member.browse') }}" class="btn btn-outline-secondary">
+    <a href="{{ Route::has('catalog.public') ? route('catalog.public') : (Route::has('member.browse') ? route('member.browse') : url('/')) }}" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left me-1"></i> Kembali ke Katalog
     </a>
 </div>
 
 <div class="row g-4">
-    <!-- Kolom Cover & Prosedur Peminjaman -->
+    <!-- Kolom Cover & Prosedur / Tombol Peminjaman -->
     <div class="col-md-4">
         <div class="card border-0 shadow-sm p-3 text-center">
             @if($book->cover_image)
@@ -35,10 +42,32 @@
                 </div>
             @endif
 
+            <!-- Tombol Aksi Peminjaman Berdasarkan Status Login -->
+            <div class="mb-3">
+                @auth
+                    @if($availableCopiesCount > 0 && $availableCopy)
+                        <form action="{{ route('member.loan.token', $availableCopy->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm fw-bold">
+                                <i class="bi bi-qr-code-scan me-1"></i> Pinjam Mandiri (QR 1 Jam)
+                            </button>
+                        </form>
+                    @else
+                        <button class="btn btn-secondary btn-lg w-100 fw-bold" disabled>
+                            <i class="bi bi-x-circle me-1"></i> Stok Eksemplar Habis
+                        </button>
+                    @endif
+                @else
+                    <a href="{{ route('login') }}" class="btn btn-warning btn-lg w-100 fw-bold text-dark shadow-sm">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Login untuk Meminjam
+                    </a>
+                @endauth
+            </div>
+
             <div class="p-3 bg-light rounded text-start border">
                 <h6 class="fw-bold mb-1 text-primary"><i class="bi bi-info-circle me-1"></i> Prosedur Peminjaman</h6>
                 <small class="text-secondary d-block">
-                    Sistem ini tidak melayani booking online. Silakan ambil buku fisik di rak perpustakaan dan bawa ke <strong>Meja Petugas</strong> untuk dicatat peminjamannya.
+                    Sistem ini tidak melayani booking online. Silakan ambil buku fisik di rak perpustakaan dan bawa ke <strong>Meja Petugas</strong> untuk dicatat peminjamannya atau tunjukkan QR Tiket Mandiri.
                 </small>
             </div>
         </div>
@@ -52,7 +81,7 @@
             <div class="row mb-3">
                 <div class="col-sm-4 text-muted">Kategori</div>
                 <div class="col-sm-8 fw-semibold">
-                    <span class="badge bg-primary">{{ $book->category->name }}</span>
+                    <span class="badge bg-primary">{{ $book->category->name ?? 'Umum' }}</span>
                 </div>
             </div>
 
@@ -71,7 +100,7 @@
                 <div class="col-sm-8"><code class="fs-6">{{ $book->isbn }}</code></div>
             </div>
 
-            <!-- Field Sesuai Scope Plan Poin E: Harga Buku (Acuan Denda) -->
+            <!-- Harga Buku (Nilai Acuan Denda) -->
             <div class="row mb-3">
                 <div class="col-sm-4 text-muted">Harga Buku (Nilai Acuan)</div>
                 <div class="col-sm-8 fw-bold text-success fs-5">
@@ -79,7 +108,7 @@
                 </div>
             </div>
 
-            <!-- Field Sesuai Scope Plan Poin E: Ketersediaan & Breakdown Eksemplar -->
+            <!-- Ketersediaan & Breakdown Eksemplar -->
             @php
                 $totalCopies = $book->copies->count();
                 $borrowedCount = $book->copies->where('status', 'borrowed')->count();

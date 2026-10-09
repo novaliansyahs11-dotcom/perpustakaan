@@ -56,19 +56,59 @@ class MemberPortalController extends Controller
     {
         $user = Auth::user();
 
+        // 1. Normalisasi Otomatis Format Nomor Telepon (Konversi ke 62...)
+        $phone = $request->phone;
+        if ($phone) {
+            $phone = preg_replace('/[^0-9]/', '', $phone);
+            if (str_starts_with($phone, '0')) {
+                $phone = '62' . substr($phone, 1);
+            } elseif (str_starts_with($phone, '8')) {
+                $phone = '62' . $phone;
+            }
+        }
+        $request->merge(['phone' => $phone]);
+
+        // 2. Normalisasi Otomatis Nomor Identitas (Hapus karakter non-angka)
+        if ($request->id_card_number) {
+            $request->merge([
+                'id_card_number' => preg_replace('/[^0-9]/', '', $request->id_card_number)
+            ]);
+        }
+
+        // 3. Aturan Panjang Digit Dinamis Berdasarkan Jenis Identitas
+        $idRules = match ($request->id_card_type) {
+            'ktm' => 'digits_between:11,13',
+            'ktp' => 'digits:16',
+            'sim' => 'digits_between:12,14',
+            default => 'digits_between:10,20',
+        };
+
+        $idMsg = match ($request->id_card_type) {
+            'ktm' => 'Nomor KTM (NIM) harus berupa angka 11 sampai 13 digit.',
+            'ktp' => 'Nomor KTP (NIK) harus berupa angka tepat 16 digit.',
+            'sim' => 'Nomor SIM harus berupa angka 12 sampai 14 digit.',
+            default => 'Nomor identitas tidak valid.',
+        };
+
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
             'email'          => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'phone'          => ['required', 'string', 'max:20'],
+            'phone'          => ['required', 'numeric', 'digits_between:10,15', Rule::unique('users')->ignore($user->id)],
             'id_card_type'   => ['required', 'in:ktm,ktp,sim'],
-            'id_card_number' => ['required', 'string', 'max:50', Rule::unique('users')->ignore($user->id)],
+            'id_card_number' => ['required', 'numeric', $idRules, Rule::unique('users')->ignore($user->id)],
         ], [
             'name.required'           => 'Nama lengkap wajib diisi.',
             'email.required'          => 'Alamat email wajib diisi.',
             'email.unique'            => 'Email sudah digunakan oleh akun lain.',
             'phone.required'          => 'Nomor handphone wajib diisi.',
+            'phone.numeric'           => 'Nomor handphone hanya boleh berisi angka.',
+            'phone.digits_between'    => 'Nomor handphone minimal 10 digit dan maksimal 15 digit.',
+            'phone.unique'            => 'Nomor handphone sudah terdaftar di akun lain.',
             'id_card_type.required'   => 'Jenis kartu identitas wajib dipilih.',
             'id_card_number.required' => 'Nomor identitas fisik wajib diisi.',
+            'id_card_number.numeric'  => 'Nomor identitas fisik hanya boleh berisi angka.',
+            'id_card_number.digits'   => $idMsg,
+            'id_card_number.digits_between' => $idMsg,
             'id_card_number.unique'   => 'Nomor identitas sudah terdaftar di sistem.',
         ]);
 
@@ -108,7 +148,7 @@ class MemberPortalController extends Controller
     {
         $user = Auth::user();
 
-        // 1. Validasi Kuota: Member tidak boleh meminjam jika masih ada buku berstatus dipinjam[cite: 2]
+        // 1. Validasi Kuota: Member tidak boleh meminjam jika masih ada buku berstatus dipinjam
         $hasActiveLoan = Loan::where('user_id', $user->id)
                              ->where('status', 'borrowed')
                              ->exists();
@@ -127,7 +167,7 @@ class MemberPortalController extends Controller
                 ->with('warning', 'Anda masih memiliki tiket aktif yang belum dipindai petugas.');
         }
 
-        // 3. Kunci eksemplar fisik dan generate token barcode dalam DB Transaction[cite: 2]
+        // 3. Kunci eksemplar fisik dan generate token barcode dalam DB Transaction
         return DB::transaction(function () use ($user, $bookCopyId) {
             $copy = BookCopy::lockForUpdate()->findOrFail($bookCopyId);
 
@@ -135,7 +175,7 @@ class MemberPortalController extends Controller
                 return back()->with('error', 'Maaf, buku ini baru saja diambil atau dipesan oleh anggota lain.');
             }
 
-            // Ubah status eksemplar sementara agar tidak diambil peminjam lain di rak[cite: 2]
+            // Ubah status eksemplar sementara agar tidak diambil peminjam lain di rak
             $copy->update(['status' => 'reserved_temp']);
 
             // Buat token barcode unik dengan masa aktif tepat 60 menit

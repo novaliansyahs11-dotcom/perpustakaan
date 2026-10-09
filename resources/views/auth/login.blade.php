@@ -31,7 +31,13 @@
                     <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required autofocus placeholder="nama@email.com">
                 </div>
                 <div class="mb-3">
-                    <label for="password" class="form-label small fw-semibold">Kata Sandi</label>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label for="password" class="form-label small fw-semibold mb-0">Kata Sandi</label>
+                        <!-- Menggunakan rute bawaan Laravel Password Reset -->
+                        <a href="{{ route('password.request') }}" class="text-decoration-none small text-primary">
+                            Lupa kata sandi?
+                        </a>
+                    </div>
                     <input type="password" name="password" id="password" class="form-control" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Masuk ke Sistem</button>

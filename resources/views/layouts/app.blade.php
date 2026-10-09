@@ -16,6 +16,7 @@
 </head>
 <body>
     @auth
+    <!-- LAYOUT TERAUTENTIKASI (DASHBOARD & SIDEBAR) -->
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
@@ -116,9 +117,56 @@
         </div>
     </div>
     @else
-        <main>
-            @yield('content')
-        </main>
+    <!-- LAYOUT PUBLIK (PENGUNJUNG SEBELUM LOGIN) -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url('/') }}">
+                <i class="bi bi-book-half fs-4 me-2 text-primary"></i>
+                <span>PerpusApp</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublic">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarPublic">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->is('/') || request()->is('katalog*') ? 'active fw-semibold' : '' }}" href="{{ url('/') }}">
+                            <i class="bi bi-journals me-1"></i> Katalog Koleksi
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Tombol Masuk & Daftar di Sisi Kanan -->
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{{ route('login') }}" class="btn btn-outline-light px-3">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Masuk
+                    </a>
+                    <a href="{{ route('register') }}" class="btn btn-primary px-3 fw-semibold">
+                        <i class="bi bi-person-plus me-1"></i> Daftar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        @yield('content')
+    </main>
     @endauth
 
     <!-- Bootstrap 5 JS Bundle CDN -->

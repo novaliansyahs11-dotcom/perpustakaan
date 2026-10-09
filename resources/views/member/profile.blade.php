@@ -135,13 +135,13 @@
 
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Nomor WhatsApp / HP</label>
-                            <input type="text" name="phone" class="form-control" value="{{ old('phone', $user->phone) }}" required>
+                            <input type="tel" name="phone" id="phone" class="form-control" value="{{ old('phone', $user->phone) }}" required inputmode="numeric" maxlength="15" placeholder="628xxxxxxxxxx">
                         </div>
 
                         <div class="row g-2 mb-4">
                             <div class="col-md-4">
                                 <label class="form-label small fw-semibold">Jenis Identitas</label>
-                                <select name="id_card_type" class="form-select" required>
+                                <select name="id_card_type" id="id_card_type" class="form-select" required>
                                     <option value="ktm" {{ old('id_card_type', $user->id_card_type) == 'ktm' ? 'selected' : '' }}>KTM (NIM)</option>
                                     <option value="ktp" {{ old('id_card_type', $user->id_card_type) == 'ktp' ? 'selected' : '' }}>KTP (NIK)</option>
                                     <option value="sim" {{ old('id_card_type', $user->id_card_type) == 'sim' ? 'selected' : '' }}>SIM</option>
@@ -149,7 +149,7 @@
                             </div>
                             <div class="col-md-8">
                                 <label class="form-label small fw-semibold">Nomor Identitas Fisik</label>
-                                <input type="text" name="id_card_number" class="form-control" value="{{ old('id_card_number', $user->id_card_number) }}" required>
+                                <input type="text" name="id_card_number" id="id_card_number" class="form-control" value="{{ old('id_card_number', $user->id_card_number) }}" required inputmode="numeric" maxlength="13" placeholder="Contoh NIM: 24101170438">
                             </div>
                         </div>
 
@@ -181,4 +181,64 @@
         </div>
     </div>
 </div>
-@endsection
+
+<!-- Script Auto Normalisasi Karakter & Prefix Telepon & Penyesuaian Identitas -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const phoneInput = document.getElementById('phone');
+        const idCardTypeSelect = document.getElementById('id_card_type');
+        const idCardInput = document.getElementById('id_card_number');
+
+        // Penyesuaian Batas Digit & Placeholder Sesuai Jenis Identitas
+        function updateIdCardLimit() {
+            if (!idCardTypeSelect || !idCardInput) return;
+            
+            const selectedType = idCardTypeSelect.value;
+            if (selectedType === 'ktp') {
+                idCardInput.setAttribute('maxlength', '16');
+                idCardInput.setAttribute('placeholder', 'Masukkan 16 digit NIK KTP');
+            } else if (selectedType === 'sim') {
+                idCardInput.setAttribute('maxlength', '14');
+                idCardInput.setAttribute('placeholder', 'Masukkan 12-14 digit Nomor SIM');
+            } else { // KTM
+                idCardInput.setAttribute('maxlength', '13');
+                idCardInput.setAttribute('placeholder', 'Masukkan 11-13 digit NIM');
+            }
+        }
+
+        if (idCardTypeSelect) {
+            idCardTypeSelect.addEventListener('change', function () {
+                updateIdCardLimit();
+                if (idCardInput) {
+                    const maxLen = parseInt(idCardInput.getAttribute('maxlength')) || 16;
+                    idCardInput.value = idCardInput.value.replace(/[^0-9]/g, '').slice(0, maxLen);
+                }
+            });
+            updateIdCardLimit();
+        }
+
+        // Filter Hanya Boleh Angka & Potong Melebihi Limit
+        if (idCardInput) {
+            idCardInput.addEventListener('input', function () {
+                const maxLen = parseInt(this.getAttribute('maxlength')) || 16;
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, maxLen);
+            });
+        }
+
+        // Normalisasi Otomatis Telepon ke 62... (Maks 15 digit)
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function () {
+                let val = this.value.replace(/[^0-9]/g, '');
+                
+                if (val.startsWith('08')) {
+                    val = '628' + val.substring(2);
+                } else if (val.startsWith('0')) {
+                    val = '62' + val.substring(1);
+                }
+                
+                this.value = val.slice(0, 15);
+            });
+        }
+    });
+</script>
+@endsection 
