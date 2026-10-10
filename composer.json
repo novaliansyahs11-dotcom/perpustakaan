@@ -9,6 +9,7 @@
         "php": "^8.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
+        "resend/resend-laravel": "^1.6",
         "resend/resend-php": "^1.16"
     },
     "require-dev": {
