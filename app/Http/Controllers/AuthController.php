@@ -87,30 +87,41 @@ class AuthController extends Controller
             'phone'          => ['required', 'regex:/^(628)[0-9]{8,11}$/'], // Format 628 dengan total 11-14 digit angka
             'id_card_type'   => ['required', 'in:ktm,ktp,sim'],
             'id_card_number' => $idCardRules,
-            'password'       => ['required', 'string', 'min:6', 'confirmed'],
+            'password'       => [
+                'required', 
+                'string', 
+                'min:8',             // Minimal 8 karakter
+                'regex:/[a-z]/',     // Huruf kecil
+                'regex:/[A-Z]/',     // Huruf besar
+                'regex:/[0-9]/',     // Angka
+                'regex:/[@$!%*#?&]/', // Karakter unik / simbol
+                'confirmed'
+            ],
         ], [
-            'name.required'                 => 'Nama lengkap wajib diisi.',
-            'email.required'                => 'Alamat email wajib diisi.',
-            'email.email'                   => 'Format email tidak valid.',
-            'email.unique'                  => 'Email sudah terdaftar.',
+            'name.required'                    => 'Nama lengkap wajib diisi.',
+            'email.required'                   => 'Alamat email wajib diisi.',
+            'email.email'                      => 'Format email tidak valid.',
+            'email.unique'                     => 'Email sudah terdaftar.',
             
             // Pesan error validasi nomor HP
-            'phone.required'                => 'Nomor HP wajib diisi.',
-            'phone.regex'                   => 'Nomor HP harus berupa format Indonesia valid (contoh: 08123456789 atau 628123456789).',
+            'phone.required'                   => 'Nomor HP wajib diisi.',
+            'phone.regex'                      => 'Nomor HP harus berupa format Indonesia valid (contoh: 08123456789 atau 628123456789).',
             
-            'id_card_type.required'         => 'Jenis identitas wajib dipilih.',
-            'id_card_type.in'               => 'Pilihan identitas harus berupa KTM, KTP, atau SIM.',
+            'id_card_type.required'            => 'Jenis identitas wajib dipilih.',
+            'id_card_type.in'                  => 'Pilihan identitas harus berupa KTM, KTP, atau SIM.',
             
             // Pesan error validasi nomor identitas
-            'id_card_number.required'       => 'Nomor identitas wajib diisi.',
-            'id_card_number.regex'          => 'Nomor identitas hanya boleh berisi angka.',
-            'id_card_number.digits'         => 'Nomor identitas tidak sesuai jumlah digit resmi (KTP: 16 digit, SIM: 12 digit).',
-            'id_card_number.digits_between' => 'Nomor KTM (NIM) harus berisi antara 10 hingga 14 digit angka.',
-            'id_card_number.unique'         => 'Nomor identitas ini sudah terdaftar di sistem.',
+            'id_card_number.required'          => 'Nomor identitas wajib diisi.',
+            'id_card_number.regex'             => 'Nomor identitas hanya boleh berisi angka.',
+            'id_card_number.digits'            => 'Nomor identitas tidak sesuai jumlah digit resmi (KTP: 16 digit, SIM: 12 digit).',
+            'id_card_number.digits_between'    => 'Nomor KTM (NIM) harus berisi antara 10 hingga 14 digit angka.',
+            'id_card_number.unique'            => 'Nomor identitas ini sudah terdaftar di sistem.',
             
-            'password.required'             => 'Kata sandi wajib diisi.',
-            'password.min'                  => 'Kata sandi minimal 6 karakter.',
-            'password.confirmed'            => 'Konfirmasi kata sandi tidak cocok.',
+            // Pesan error validasi password kompleks
+            'password.required'                => 'Kata sandi wajib diisi.',
+            'password.min'                     => 'Kata sandi minimal harus terdiri dari 8 karakter.',
+            'password.regex'                   => 'Kata sandi harus mengandung kombinasi huruf besar, huruf kecil, angka, dan simbol unik (@$!%*#?&).',
+            'password.confirmed'               => 'Konfirmasi kata sandi tidak cocok.',
         ]);
 
         $user = User::create([

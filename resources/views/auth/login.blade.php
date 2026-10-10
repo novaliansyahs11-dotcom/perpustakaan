@@ -30,6 +30,7 @@
                     <label for="email" class="form-label small fw-semibold">Alamat Email</label>
                     <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}" required autofocus placeholder="nama@email.com">
                 </div>
+                
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <label for="password" class="form-label small fw-semibold mb-0">Kata Sandi</label>
@@ -38,8 +39,17 @@
                             Lupa kata sandi?
                         </a>
                     </div>
-                    <input type="password" name="password" id="password" class="form-control" required placeholder="••••••••">
+                    
+                    <!-- Input Password dengan Tombol Ikon Mata -->
+                    <div class="input-group">
+                        <input type="password" name="password" id="password" class="form-control" required placeholder="••••••••">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" tabindex="-1">
+                            <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                    <small class="text-muted d-mt-1" style="font-size: 11px;">Min. 8 karakter (huruf besar, kecil, angka, & simbol).</small>
                 </div>
+
                 <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Masuk ke Sistem</button>
             </form>
 
@@ -50,4 +60,22 @@
         </div>
     </div>
 </div>
+
+<!-- Script untuk Toggle Show/Hide Password -->
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        const passwordInput = document.getElementById('password');
+        const eyeIcon = document.getElementById('eyeIcon');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.classList.remove('bi-eye-slash');
+            eyeIcon.classList.add('bi-eye');
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.classList.remove('bi-eye');
+            eyeIcon.classList.add('bi-eye-slash');
+        }
+    });
+</script>
 @endsection

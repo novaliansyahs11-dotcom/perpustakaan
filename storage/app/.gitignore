@@ -2,3 +2,5 @@
 !private/
 !public/
 !.gitignore
+!storage/app/public/covers
+!storage/app/public/covers/*
