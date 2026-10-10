@@ -14,6 +14,60 @@
     </a>
 </div>
 
+<!-- ========================================== -->
+<!-- KOTAK TIKET QR PEMINJAMAN MANDIRI AKTIF   -->
+<!-- ========================================== -->
+@if(isset($activeTokens) && $activeTokens->count() > 0)
+<div class="card border-warning shadow-sm mb-4">
+    <div class="card-header bg-warning text-dark fw-bold d-flex align-items-center">
+        <i class="bi bi-qr-code-scan me-2 fs-5"></i> Tiket QR Peminjaman Mandiri Aktif (Menunggu Pengambilan di Petugas)
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-3">Kode Token</th>
+                        <th>Judul Buku</th>
+                        <th>No. Eksemplar</th>
+                        <th>Batas Waktu Pengambilan</th>
+                        <th class="text-end pe-3">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($activeTokens as $token)
+                    <tr>
+                        <td class="ps-3">
+                            <span class="badge bg-dark font-monospace">{{ $token->token_code }}</span>
+                        </td>
+                        <td>
+                            <strong class="text-dark d-block">{{ $token->bookCopy->book->title ?? '-' }}</strong>
+                            <small class="text-muted">Penulis: {{ $token->bookCopy->book->author ?? '-' }}</small>
+                        </td>
+                        <td><code>{{ $token->bookCopy->copy_code ?? '-' }}</code></td>
+                        <td>
+                            <span class="text-danger fw-semibold">
+                                <i class="bi bi-clock-history me-1"></i>
+                                {{ \Carbon\Carbon::parse($token->expires_at)->format('d M Y, H:i') }}
+                            </span>
+                        </td>
+                        <td class="text-end pe-3">
+                            <a href="{{ route('member.ticket', $token->id) }}" class="btn btn-sm btn-primary shadow-sm">
+                                <i class="bi bi-qr-code me-1"></i> Buka QR Tiket
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
+
+<!-- ========================================== -->
+<!-- TABEL UTAMA RIWAYAT PINJAMAN             -->
+<!-- ========================================== -->
 <div class="card border-0 shadow-sm">
     <div class="card-body p-0">
         <div class="table-responsive">

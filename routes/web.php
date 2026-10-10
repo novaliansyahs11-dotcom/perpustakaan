@@ -157,7 +157,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Area Member (Logged-In Area)
     Route::get('/browse', [DashboardController::class, 'browseBooks'])->name('member.browse');
-    Route::get('/my-loans', [DashboardController::class, 'myLoans'])->name('member.loans');
+    Route::get('/my-loans', [MemberPortalController::class, 'myLoans'])->name('member.loans');
     Route::get('/my-loans/print', [DashboardController::class, 'printMyLoans'])->name('member.loans.print');
     Route::get('/book/{book}', [MemberPortalController::class, 'showBook'])->name('member.books.show');
 

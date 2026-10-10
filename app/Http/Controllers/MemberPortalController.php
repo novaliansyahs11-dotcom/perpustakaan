@@ -26,6 +26,28 @@ class MemberPortalController extends Controller
         return view('member.show_book', compact('book', 'availableCopiesCount', 'borrowedCopiesCount'));
     }
 
+    // Menampilkan Daftar Pinjaman & Tiket QR Aktif Member
+    public function myLoans()
+    {
+        $user = Auth::user();
+
+        // 1. Ambil tiket QR mandiri yang masih pending dan belum kedaluwarsa (60 menit)
+        $activeTokens = LoanToken::with(['bookCopy.book'])
+            ->where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->where('expires_at', '>', Carbon::now())
+            ->latest()
+            ->get();
+
+        // 2. Ambil data riwayat pinjaman dengan pagination
+        $loans = Loan::with(['bookCopy.book'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(10);
+
+        return view('member.loans.index', compact('activeTokens', 'loans'));
+    }
+
     // Halaman Profil Anggota
     public function profile()
     {
@@ -150,8 +172,8 @@ class MemberPortalController extends Controller
 
         // 1. Validasi Kuota: Member tidak boleh meminjam jika masih ada buku berstatus dipinjam
         $hasActiveLoan = Loan::where('user_id', $user->id)
-                             ->where('status', 'borrowed')
-                             ->exists();
+                           ->where('status', 'borrowed')
+                           ->exists();
         if ($hasActiveLoan) {
             return back()->with('error', 'Gagal membuat tiket! Anda masih memiliki pinjaman buku aktif (Batas kuota maksimal 1 buku).');
         }
