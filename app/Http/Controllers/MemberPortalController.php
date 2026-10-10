@@ -45,7 +45,7 @@ class MemberPortalController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('member.loans.index', compact('activeTokens', 'loans'));
+        return view('member.loans', compact('activeTokens', 'loans'));
     }
 
     // Halaman Profil Anggota
