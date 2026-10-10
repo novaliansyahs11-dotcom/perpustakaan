@@ -36,6 +36,18 @@
                 <div class="form-text">Hanya unit eksemplar berstatus 'Available' yang muncul pada daftar ini.</div>
             </div>
 
+            <!-- Tambahkan input tanggal secara eksplisit agar masuk ke controller & database -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Tanggal Pinjam</label>
+                    <input type="date" name="borrow_date" class="form-control" value="{{ date('Y-m-d') }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-semibold">Tanggal Jatuh Tempo</label>
+                    <input type="date" name="due_date" class="form-control" value="{{ date('Y-m-d', strtotime('+7 days')) }}" required>
+                </div>
+            </div>
+
             <div class="alert alert-info py-2 small mb-4">
                 <i class="bi bi-info-circle me-1"></i> Durasi standar peminjaman otomatis ditetapkan <strong>7 Hari</strong> terhitung dari hari ini.
             </div>
