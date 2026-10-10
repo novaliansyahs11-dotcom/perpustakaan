@@ -11,17 +11,11 @@ use Resend\Client;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Mail::extend('resend', function () {
@@ -31,11 +25,21 @@ class AppServiceProvider extends ServiceProvider
                     $email = MessageConverter::toEmail($message->getOriginalMessage());
                     $resend = new Client(env('RESEND_KEY'));
                     
+                    $htmlBody = $email->getHtmlBody();
+                    if (is_resource($htmlBody)) {
+                        $htmlBody = stream_get_contents($htmlBody);
+                    }
+
+                    $textBody = $email->getTextBody();
+                    if (is_resource($textBody)) {
+                        $textBody = stream_get_contents($textBody);
+                    }
+
                     $resend->emails->send([
                         'from' => $email->getFrom()[0]->getAddress(),
                         'to' => collect($email->getTo())->map(fn ($item) => $item->getAddress())->all(),
-                        'subject' => $email->getSubject(),
-                        'html' => $email->getHtmlBody() ?: $email->getTextBody(),
+                        'subject' => (string) $email->getSubject(),
+                        'html' => (string) ($htmlBody ?: $textBody ?: ''),
                     ]);
                 }
 
