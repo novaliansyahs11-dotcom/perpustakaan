@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# Install Composer
+# Install Composer 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
@@ -21,6 +21,8 @@ WORKDIR /var/www
 COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
+
+RUN php artisan config:clear && php artisan cache:clear && php artisan route:clear
 
 # Hak akses folder storage dan cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
