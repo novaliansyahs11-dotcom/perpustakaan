@@ -38,14 +38,17 @@
 <div class="row g-4 mb-4">
     <!-- Kartu Anggota Digital & Ringkasan Metrik -->
     <div class="col-md-5">
-        <!-- Kartu Identitas Digital Member -->
+        <!-- Kartu Identitas Digital Member / Admin -->
         <div class="card border-0 shadow text-white p-4" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); border-radius: 14px;">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-book-half fs-3 me-2 text-warning"></i>
                     <span class="fw-bold fs-5 tracking-wide">PERPUSAPP CARD</span>
                 </div>
-                <span class="badge bg-light text-primary fw-bold">MEMBER</span>
+                <!-- Badge Role Dinamis: ADMIN atau MEMBER -->
+                <span class="badge {{ $user->role === 'admin' ? 'bg-danger text-white' : 'bg-light text-primary' }} fw-bold px-3 py-2">
+                    {{ $user->role === 'admin' ? 'ADMIN' : 'MEMBER' }}
+                </span>
             </div>
 
             <div class="mb-3">
@@ -75,7 +78,8 @@
             </div>
         </div>
 
-        <!-- Ringkasan Statistik Pinjaman & Denda -->
+        <!-- Ringkasan Statistik Pinjaman & Denda (Hanya Tampil Jika Bukan Admin) -->
+        @if($user->role !== 'admin')
         <div class="card border-0 shadow-sm mt-3 p-3">
             <div class="row text-center g-2">
                 <div class="col-4 border-end">
@@ -99,6 +103,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
     <!-- Tab Pengaturan: Data Diri & Ganti Password -->
@@ -189,7 +194,6 @@
         const idCardTypeSelect = document.getElementById('id_card_type');
         const idCardInput = document.getElementById('id_card_number');
 
-        // Penyesuaian Batas Digit & Placeholder Sesuai Jenis Identitas
         function updateIdCardLimit() {
             if (!idCardTypeSelect || !idCardInput) return;
             
@@ -200,7 +204,7 @@
             } else if (selectedType === 'sim') {
                 idCardInput.setAttribute('maxlength', '14');
                 idCardInput.setAttribute('placeholder', 'Masukkan 12-14 digit Nomor SIM');
-            } else { // KTM
+            } else { 
                 idCardInput.setAttribute('maxlength', '13');
                 idCardInput.setAttribute('placeholder', 'Masukkan 11-13 digit NIM');
             }
@@ -217,7 +221,6 @@
             updateIdCardLimit();
         }
 
-        // Filter Hanya Boleh Angka & Potong Melebihi Limit
         if (idCardInput) {
             idCardInput.addEventListener('input', function () {
                 const maxLen = parseInt(this.getAttribute('maxlength')) || 16;
@@ -225,7 +228,6 @@
             });
         }
 
-        // Normalisasi Otomatis Telepon ke 62... (Maks 15 digit)
         if (phoneInput) {
             phoneInput.addEventListener('input', function () {
                 let val = this.value.replace(/[^0-9]/g, '');
@@ -241,4 +243,4 @@
         }
     });
 </script>
-@endsection 
+@endsection
