@@ -48,7 +48,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Nomor Telepon / WhatsApp</label>
-                        <input type="text" inputmode="numeric" name="phone" id="modal_phone" class="form-control" required maxlength="14" oninput="formatPhoneNumber(this)" placeholder="628xxxxxxxxxx (Ketik 08... otomatis jadi 628...)">
+                        <input type="text" inputmode="numeric" name="phone" id="modal_phone" class="form-control" required maxlength="14" oninput="formatPhoneNumber(this)" placeholder="628xxxxxxxxxx">
                     </div>
                     
                     <!-- Pilihan Identitas Fisik (KTM / KTP / SIM) -->
