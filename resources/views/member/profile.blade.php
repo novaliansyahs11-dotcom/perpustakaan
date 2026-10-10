@@ -173,11 +173,11 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-semibold">Kata Sandi Baru</label>
-                            <input type="password" name="password" class="form-control" required placeholder="Minimal 6 karakter">
+                            <input type="password" name="password" class="form-control" required minlength="8" placeholder="Min. 8 karakter (Huruf besar, kecil, angka, simbol)">
                         </div>
                         <div class="mb-4">
                             <label class="form-label small fw-semibold">Konfirmasi Kata Sandi Baru</label>
-                            <input type="password" name="password_confirmation" class="form-control" required placeholder="Ulangi kata sandi baru">
+                            <input type="password" name="password_confirmation" class="form-control" required minlength="8" placeholder="Ulangi kata sandi baru">
                         </div>
                         <button type="submit" class="btn btn-outline-danger px-4">Perbarui Kata Sandi</button>
                     </form>
