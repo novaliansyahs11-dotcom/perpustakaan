@@ -58,12 +58,12 @@
                         required 
                         maxlength="14"
                         oninput="formatPhoneNumber(this)"
-                        placeholder="6281234567890 (11-14 digit)"
+                        placeholder="6281234567890 (Ketik 08... otomatis jadi 628...)"
                         class="w-full pl-8 pr-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
                 </div>
             </div>
 
-            <!-- Jenis & Nomor Identitas Presisi -->
+            <!-- Jenis & Nomor Identitas Presisi (Angka Only & Batasan Digit Resmi) -->
             <div class="grid grid-cols-5 gap-3">
                 <div class="col-span-2">
                     <label class="block text-sm font-medium text-slate-700 mb-1">Jenis Kartu</label>
@@ -82,21 +82,21 @@
                         id="id_card_number" 
                         value="{{ old('id_card_number') }}" 
                         required 
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        oninput="validateIdNumber(this)"
                         class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
                 </div>
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Kata Sandi</label>
-                <input type="password" name="password" required 
-                    placeholder="Minimal 6 karakter"
+                <input type="password" name="password" required minlength="8"
+                    placeholder="Min. 8 karakter (Huruf besar, kecil, angka, simbol)"
                     class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
             </div>
 
             <div>
                 <label class="block text-sm font-medium text-slate-700 mb-1">Konfirmasi Kata Sandi</label>
-                <input type="password" name="password_confirmation" required 
+                <input type="password" name="password_confirmation" required minlength="8"
                     placeholder="Ulangi kata sandi"
                     class="w-full px-3.5 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition">
             </div>
@@ -114,13 +114,13 @@
         </form>
     </div>
 
-    <!-- Script Format Nomor Telepon & Pembatasan Digit Kartu -->
+    <!-- Script Format Nomor Telepon & Pembatasan Digit Kartu Identitas -->
     <script>
     function formatPhoneNumber(input) {
         let val = input.value.replace(/[^0-9]/g, '');
         if (val.startsWith('08')) {
             val = '628' + val.substring(2);
-        } else if (val.startsWith('0')) {
+        } else if (val.startsWith('0') && !val.startsWith('62')) {
             val = '62' + val.substring(1);
         }
         input.value = val;
@@ -131,15 +131,30 @@
         const input = document.getElementById('id_card_number');
 
         if (type === 'ktp') {
-            input.placeholder = '16 digit NIK KTP';
+            input.placeholder = 'Wajib 16 digit';
             input.maxLength = 16;
         } else if (type === 'sim') {
-            input.placeholder = '12 digit No. SIM';
+            input.placeholder = 'Wajib 12 digit';
             input.maxLength = 12;
         } else {
-            input.placeholder = '10-14 digit NIM KTM';
+            input.placeholder = '10 - 14 digit';
             input.maxLength = 14;
         }
+        
+        // Potong nilai jika melebihi batas saat tipe diganti
+        if (input.value.length > input.maxLength) {
+            input.value = input.value.substring(0, input.maxLength);
+        }
+    }
+
+    function validateIdNumber(input) {
+        // Hanya angka dan batasi sesuai maxLength yang aktif
+        let val = input.value.replace(/[^0-9]/g, '');
+        const max = parseInt(input.maxLength) || 16;
+        if (val.length > max) {
+            val = val.substring(0, max);
+        }
+        input.value = val;
     }
 
     document.addEventListener("DOMContentLoaded", function() {

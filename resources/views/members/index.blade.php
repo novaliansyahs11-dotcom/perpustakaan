@@ -48,14 +48,14 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Nomor Telepon / WhatsApp</label>
-                        <input type="text" name="phone" class="form-control" required placeholder="08xxxxxxxxxx">
+                        <input type="text" inputmode="numeric" name="phone" id="modal_phone" class="form-control" required maxlength="14" oninput="formatPhoneNumber(this)" placeholder="628xxxxxxxxxx (Ketik 08... otomatis jadi 628...)">
                     </div>
                     
                     <!-- Pilihan Identitas Fisik (KTM / KTP / SIM) -->
                     <div class="row g-2 mb-3">
                         <div class="col-md-5">
                             <label class="form-label small fw-semibold">Kartu Identitas</label>
-                            <select name="id_card_type" class="form-select" required>
+                            <select name="id_card_type" id="modal_id_card_type" class="form-select" required onchange="updateIdValidation()">
                                 <option value="ktm">KTM (NIM)</option>
                                 <option value="ktp">KTP (NIK)</option>
                                 <option value="sim">SIM</option>
@@ -63,13 +63,13 @@
                         </div>
                         <div class="col-md-7">
                             <label class="form-label small fw-semibold">Nomor Identitas</label>
-                            <input type="text" name="id_card_number" class="form-control" required placeholder="Masukkan nomor kartu">
+                            <input type="text" inputmode="numeric" name="id_card_number" id="modal_id_card_number" class="form-control" required oninput="validateIdNumber(this)" placeholder="Masukkan nomor kartu">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label small fw-semibold">Kata Sandi Awal</label>
-                        <input type="password" name="password" class="form-control" required placeholder="Minimal 6 karakter">
+                        <input type="password" name="password" class="form-control" required minlength="8" placeholder="Min. 8 karakter (Huruf besar, kecil, angka, simbol)">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -183,4 +183,50 @@
         {{ $members->links('pagination::bootstrap-5') }}
     </div>
 </div>
+
+<!-- Script Format Nomor Telepon & Pembatasan Digit Identitas -->
+<script>
+function formatPhoneNumber(input) {
+    let val = input.value.replace(/[^0-9]/g, '');
+    if (val.startsWith('08')) {
+        val = '628' + val.substring(2);
+    } else if (val.startsWith('0') && !val.startsWith('62')) {
+        val = '62' + val.substring(1);
+    }
+    input.value = val;
+}
+
+function updateIdValidation() {
+    const type = document.getElementById('modal_id_card_type').value;
+    const input = document.getElementById('modal_id_card_number');
+
+    if (type === 'ktp') {
+        input.placeholder = 'Wajib 16 digit NIK';
+        input.maxLength = 16;
+    } else if (type === 'sim') {
+        input.placeholder = 'Wajib 12 digit SIM';
+        input.maxLength = 12;
+    } else {
+        input.placeholder = '10 - 14 digit NIM';
+        input.maxLength = 14;
+    }
+    
+    if (input.value.length > input.maxLength) {
+        input.value = input.value.substring(0, input.maxLength);
+    }
+}
+
+function validateIdNumber(input) {
+    let val = input.value.replace(/[^0-9]/g, '');
+    const max = parseInt(input.maxLength) || 16;
+    if (val.length > max) {
+        val = val.substring(0, max);
+    }
+    input.value = val;
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    updateIdValidation();
+});
+</script>
 @endsection
