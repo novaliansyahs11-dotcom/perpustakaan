@@ -35,5 +35,5 @@ COPY .render/nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-# Jalankan perintah startup saat kontainer aktif
-CMD php artisan storage:link && php artisan config:clear && service nginx start && php-fpm
+# Jalankan storage:link, bersihkan config, jalankan queue worker di background, lalu aktifkan Nginx dan PHP-FPM
+CMD php artisan storage:link && php artisan config:clear && php artisan queue:work --tries=3 & service nginx start && php-fpm
