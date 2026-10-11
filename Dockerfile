@@ -22,6 +22,10 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
+# Tambahkan perintah cache konfigurasi agar variabel Render terbaca
+RUN php artisan config:clear \
+    && php artisan config:cache \
+    && php artisan route:clear
 
 # Hak akses folder storage dan cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
