@@ -23,16 +23,17 @@ class SimulateFineLoans extends Command
             return;
         }
 
-        // Ambil 2 eksemplar buku yang statusnya 'available'
-        $copies = BookCopy::with('book')->where('status', 'available')->take(2)->get();
+        // Ambil 2 ID eksemplar buku yang statusnya 'available'
+        $copyIds = BookCopy::where('status', 'available')->take(2)->pluck('id');
 
-        if ($copies->count() < 2) {
+        if ($copyIds->count() < 2) {
             $this->error('Stok eksemplar yang tersedia kurang dari 2.');
             return;
         }
 
         // Simulasi 1: Telat 3 hari (Pinjam 10 hari lalu, jatuh tempo 3 hari lalu) -> Denda 10%
-        $copy1 = $copies[0];
+        /** @var BookCopy $copy1 */
+        $copy1 = BookCopy::with('book')->find($copyIds[0]);
         $borrowDate1 = Carbon::now()->subDays(10)->toDateString();
         $dueDate1 = Carbon::now()->subDays(3)->toDateString();
 
@@ -47,7 +48,8 @@ class SimulateFineLoans extends Command
         $copy1->update(['status' => 'borrowed']);
 
         // Simulasi 2: Telat 10 hari (Pinjam 17 hari lalu, jatuh tempo 10 hari lalu) -> Denda 20%
-        $copy2 = $copies[1];
+        /** @var BookCopy $copy2 */
+        $copy2 = BookCopy::with('book')->find($copyIds[1]);
         $borrowDate2 = Carbon::now()->subDays(17)->toDateString();
         $dueDate2 = Carbon::now()->subDays(10)->toDateString();
 
