@@ -22,18 +22,18 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-# Tambahkan perintah cache konfigurasi agar variabel Render terbaca
+# Hapus config:cache saat build, cukup bersihkan cache saja
 RUN php artisan config:clear \
-    && php artisan config:cache \
     && php artisan route:clear
 
-# Hak akses folder storage dan cache
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Hak akses folder storage dan cache agar bisa ditulis
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Konfigurasi Nginx
 COPY .render/nginx.conf /etc/nginx/sites-available/default
 
 EXPOSE 80
 
-# Jalankan storage:link saat startup container, lalu aktifkan Nginx dan PHP-FPM
-CMD php artisan storage:link && service nginx start && php-fpm
+# Jalankan perintah startup saat kontainer aktif
+CMD php artisan storage:link && php artisan config:clear && service nginx start && php-fpm
