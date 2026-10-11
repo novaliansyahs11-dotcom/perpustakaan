@@ -99,8 +99,8 @@ Route::middleware('auth')->group(function () {
         return view('auth.verify-email');
     })->name('verification.notice');
 
-    // 2. Proses Klik Link Verifikasi dari Email
-    Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    // 2. Proses Klik Link Verifikasi dari Email (Mendukung GET & POST untuk mencegah MethodNotAllowed)
+    Route::match(['get', 'post'], '/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
         $request->fulfill();
         return redirect()->route('dashboard')->with('success', 'Email Anda berhasil diverifikasi!');
     })->middleware(['signed'])->name('verification.verify');

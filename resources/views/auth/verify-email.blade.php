@@ -25,7 +25,7 @@
                 <div class="d-flex align-items-center small text-muted">
                     <i class="bi bi-info-circle me-2 text-primary fs-5"></i>
                     <span>
-                        <strong>Catatan Pengujian Lokal:</strong> Karena mode mailer diset ke <code>log</code>, link verifikasi dapat Anda temukan di file <code>storage/logs/laravel.log</code>.
+                        <strong>Catatan Live SMTP:</strong> Email verifikasi dikirim langsung via Google Workspace ke kotak masuk Anda. Silakan cek inbox atau folder spam.
                     </span>
                 </div>
             </div>
