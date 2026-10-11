@@ -9,8 +9,11 @@
         "php": "^8.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
+        "nyholm/psr7": "^1.8",
+        "railsware/mailtrap-php": "^3.16",
         "resend/resend-laravel": "^1.6",
-        "resend/resend-php": "^1.16"
+        "resend/resend-php": "^1.16",
+        "symfony/http-client": "^7.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
