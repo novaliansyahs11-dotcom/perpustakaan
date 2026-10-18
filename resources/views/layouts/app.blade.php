@@ -57,6 +57,7 @@
                         </a>
                     </li>
                     @else
+                    <!-- Menu Profil Saya di tengah sudah dihapus, disamakan dengan Admin -->
                     <li class="nav-item mt-2 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Member Area</li>
                     <li>
                         <a href="{{ route('member.browse') }}" class="nav-link {{ request()->routeIs('member.browse') ? 'active' : '' }}">
@@ -68,26 +69,36 @@
                             <i class="bi bi-clock-history me-2"></i> Pinjaman Saya
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('member.profile') }}" class="nav-link {{ request()->routeIs('member.profile*') ? 'active' : '' }}">
-                            <i class="bi bi-person-badge me-2"></i> Profil Saya
-                        </a>
-                    </li>
                     @endif
                 </ul>
                 <hr>
 
                 <!-- Footer Profil User & Logout -->
                 <div class="d-flex align-items-center justify-content-between pt-1">
-                    <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2" title="Kelola Profil & Pengaturan">
-                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
-                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                    @if(Auth::user()->role === 'admin')
+                        <!-- Admin: Nama tidak ada link profil -->
+                        <div class="text-white d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                            </div>
+                            <div style="line-height: 1.2;">
+                                <strong class="d-block text-truncate" style="max-width: 105px;">{{ Auth::user()->name }}</strong>
+                                <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
+                            </div>
                         </div>
-                        <div style="line-height: 1.2;">
-                            <strong class="d-block text-truncate" style="max-width: 105px;">{{ Auth::user()->name }}</strong>
-                            <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
-                        </div>
-                    </a>
+                    @else
+                        <!-- Member: Klik nama mengarah ke halaman profil -->
+                        <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2" title="Kelola Profil & Pengaturan">
+                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
+                                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                            </div>
+                            <div style="line-height: 1.2;">
+                                <strong class="d-block text-truncate" style="max-width: 105px;">{{ Auth::user()->name }}</strong>
+                                <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
+                            </div>
+                        </a>
+                    @endif
+
                     <form action="{{ route('logout') }}" method="POST" class="m-0">
                         @csrf
                         <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" title="Logout">
