@@ -73,38 +73,31 @@
                 </ul>
                 <hr>
 
-                <!-- Footer Profil User & Logout -->
-                <div class="d-flex align-items-center justify-content-between pt-1">
+                <!-- Footer Profil User di Sidebar (Tanpa tombol logout luar, terintegrasi ke Profil/UC-05) -->
+                <div class="d-flex align-items-center pt-1">
                     @if(Auth::user()->role === 'admin')
-                        <!-- Admin: Nama tidak ada link profil -->
-                        <div class="text-white d-flex align-items-center gap-2">
+                        <!-- Admin: Nama tidak ada link profil khusus -->
+                        <div class="text-white d-flex align-items-center gap-2 w-100">
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                             </div>
-                            <div style="line-height: 1.2;">
-                                <strong class="d-block text-truncate" style="max-width: 105px;">{{ Auth::user()->name }}</strong>
+                            <div style="line-height: 1.2;" class="text-truncate">
+                                <strong class="d-block text-truncate" style="max-width: 140px;">{{ Auth::user()->name }}</strong>
                                 <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
                             </div>
                         </div>
                     @else
-                        <!-- Member: Klik nama mengarah ke halaman profil -->
-                        <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2" title="Kelola Profil & Pengaturan">
+                        <!-- Member: Klik nama mengarah ke halaman profil (UC-05) -->
+                        <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2 w-100" title="Kelola Profil & Pengaturan">
                             <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
                                 {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                             </div>
-                            <div style="line-height: 1.2;">
-                                <strong class="d-block text-truncate" style="max-width: 105px;">{{ Auth::user()->name }}</strong>
+                            <div style="line-height: 1.2;" class="text-truncate">
+                                <strong class="d-block text-truncate" style="max-width: 140px;">{{ Auth::user()->name }}</strong>
                                 <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
                             </div>
                         </a>
                     @endif
-
-                    <form action="{{ route('logout') }}" method="POST" class="m-0">
-                        @csrf
-                        <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" title="Logout">
-                            <i class="bi bi-box-arrow-right fs-6"></i>
-                        </button>
-                    </form>
                 </div>
             </div>
 

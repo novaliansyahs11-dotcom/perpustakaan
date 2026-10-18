@@ -117,7 +117,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-security-tab" data-bs-toggle="pill" data-bs-target="#pills-security" type="button" role="tab">
-                        <i class="bi bi-shield-lock me-1"></i> Keamanan Sandi
+                        <i class="bi bi-shield-lock me-1"></i> Keamanan Sandi & Sesi
                     </button>
                 </li>
             </ul>
@@ -162,9 +162,9 @@
                     </form>
                 </div>
 
-                <!-- Form Ganti Password -->
+                <!-- Form Ganti Password & Tombol Logout (Terintegrasi ke UC-05 Profil) -->
                 <div class="tab-pane fade" id="pills-security" role="tabpanel">
-                    <form action="{{ route('member.profile.password') }}" method="POST">
+                    <form action="{{ route('member.profile.password') }}" method="POST" class="mb-4 pb-3 border-bottom">
                         @csrf
                         @method('PUT')
                         <div class="mb-3">
@@ -181,6 +181,24 @@
                         </div>
                         <button type="submit" class="btn btn-outline-danger px-4">Perbarui Kata Sandi</button>
                     </form>
+
+                    <!-- Tombol Keluar / Logout Sesi Akun -->
+                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded border">
+                        <div>
+                            <h6 class="fw-bold text-danger mb-1">
+                                <i class="bi bi-box-arrow-right me-2"></i>Keluar dari Sesi
+                            </h6>
+                            <p class="text-muted small mb-0">
+                                Mengakhiri sesi aktif Anda saat ini di PerpusApp.
+                            </p>
+                        </div>
+                        <form action="{{ route('logout') }}" method="POST" class="m-0">
+                            @csrf
+                            <button type="submit" class="btn btn-danger px-3 fw-semibold btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i> Logout
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
