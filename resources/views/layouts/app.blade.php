@@ -57,7 +57,6 @@
                         </a>
                     </li>
                     @else
-                    <!-- Menu Profil Saya di tengah sudah dihapus, disamakan dengan Admin -->
                     <li class="nav-item mt-2 text-uppercase text-secondary" style="font-size: 0.75rem; letter-spacing: 1px;">Member Area</li>
                     <li>
                         <a href="{{ route('member.browse') }}" class="nav-link {{ request()->routeIs('member.browse') ? 'active' : '' }}">
@@ -69,35 +68,26 @@
                             <i class="bi bi-clock-history me-2"></i> Pinjaman Saya
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('member.profile') }}" class="nav-link {{ request()->routeIs('member.profile*') ? 'active' : '' }}">
+                            <i class="bi bi-person-badge me-2"></i> Profil Saya
+                        </a>
+                    </li>
                     @endif
                 </ul>
                 <hr>
 
-                <!-- Footer Profil User di Sidebar (Tanpa tombol logout luar, terintegrasi ke Profil/UC-05) -->
-                <div class="d-flex align-items-center pt-1">
-                    @if(Auth::user()->role === 'admin')
-                        <!-- Admin: Nama tidak ada link profil khusus -->
-                        <div class="text-white d-flex align-items-center gap-2 w-100">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                            </div>
-                            <div style="line-height: 1.2;" class="text-truncate">
-                                <strong class="d-block text-truncate" style="max-width: 140px;">{{ Auth::user()->name }}</strong>
-                                <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
-                            </div>
+                <!-- Footer Profil User (Tanpa Tombol Logout di Sidebar, Mengarah ke Halaman Profil) -->
+                <div class="pt-1">
+                    <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2 w-100" title="Kelola Profil & Pengaturan">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
+                            {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                         </div>
-                    @else
-                        <!-- Member: Klik nama mengarah ke halaman profil (UC-05) -->
-                        <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2 w-100" title="Kelola Profil & Pengaturan">
-                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
-                                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
-                            </div>
-                            <div style="line-height: 1.2;" class="text-truncate">
-                                <strong class="d-block text-truncate" style="max-width: 140px;">{{ Auth::user()->name }}</strong>
-                                <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
-                            </div>
-                        </a>
-                    @endif
+                        <div style="line-height: 1.2;" class="text-truncate">
+                            <strong class="d-block text-truncate" style="max-width: 140px;">{{ Auth::user()->name }}</strong>
+                            <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
+                        </div>
+                    </a>
                 </div>
             </div>
 
