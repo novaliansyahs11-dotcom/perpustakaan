@@ -68,16 +68,11 @@
                             <i class="bi bi-clock-history me-2"></i> Pinjaman Saya
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('member.profile') }}" class="nav-link {{ request()->routeIs('member.profile*') ? 'active' : '' }}">
-                            <i class="bi bi-person-badge me-2"></i> Profil Saya
-                        </a>
-                    </li>
                     @endif
                 </ul>
                 <hr>
 
-                <!-- Footer Profil User (Tanpa Tombol Logout di Sidebar, Mengarah ke Halaman Profil) -->
+                <!-- Footer Profil User (Mengarah ke Halaman Profil saat diklik, seragam dengan Admin) -->
                 <div class="pt-1">
                     <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2 w-100" title="Kelola Profil & Pengaturan">
                         <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
