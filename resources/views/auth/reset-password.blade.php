@@ -29,7 +29,8 @@
 
                 <div class="mb-3">
                     <label for="password" class="form-label small fw-semibold">Kata Sandi Baru</label>
-                    <input type="password" name="password" id="password" class="form-control" required placeholder="Minimal 6 karakter">
+                    <input type="password" name="password" id="password" class="form-control" required placeholder="********">
+                    <div class="form-text text-muted" style="font-size: 0.75rem;">Min. 8 karakter (huruf besar, kecil, angka, & simbol).</div>
                 </div>
 
                 <div class="mb-3">
