@@ -68,11 +68,6 @@
                             <i class="bi bi-clock-history me-2"></i> Pinjaman Saya
                         </a>
                     </li>
-                    <li>
-                        <a href="{{ route('member.profile') }}" class="nav-link {{ request()->routeIs('member.profile*') ? 'active' : '' }}">
-                            <i class="bi bi-person-badge me-2"></i> Profil Saya
-                        </a>
-                    </li>
                     @endif
                 </ul>
                 <hr>
@@ -89,7 +84,7 @@
                         </div>
                     </a>
 
-                    <!-- Form Logout POST dengan Tombol Ikon Logof -->
+                    <!-- Form Logout POST dengan Tombol Ikon Logout -->
                     <form action="{{ route('logout') }}" method="POST" class="m-0">
                         @csrf
                         <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" title="Keluar Sistem">
