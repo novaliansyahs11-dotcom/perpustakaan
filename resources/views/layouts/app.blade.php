@@ -68,21 +68,34 @@
                             <i class="bi bi-clock-history me-2"></i> Pinjaman Saya
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('member.profile') }}" class="nav-link {{ request()->routeIs('member.profile*') ? 'active' : '' }}">
+                            <i class="bi bi-person-badge me-2"></i> Profil Saya
+                        </a>
+                    </li>
                     @endif
                 </ul>
                 <hr>
 
-                <!-- Footer Profil User (Mengarah ke Halaman Profil saat diklik, seragam dengan Admin) -->
-                <div class="pt-1">
-                    <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2 w-100" title="Kelola Profil & Pengaturan">
+                <!-- Footer Profil User & Tombol Logout Berlogo di Sidebar -->
+                <div class="d-flex align-items-center justify-content-between pt-1">
+                    <a href="{{ route('member.profile') }}" class="text-decoration-none text-white d-flex align-items-center gap-2" title="Kelola Profil & Pengaturan">
                         <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center fw-bold" style="width: 34px; height: 34px; font-size: 13px;">
                             {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                         </div>
-                        <div style="line-height: 1.2;" class="text-truncate">
-                            <strong class="d-block text-truncate" style="max-width: 140px;">{{ Auth::user()->name }}</strong>
+                        <div style="line-height: 1.2;">
+                            <strong class="d-block text-truncate" style="max-width: 105px;">{{ Auth::user()->name }}</strong>
                             <small class="text-secondary text-capitalize" style="font-size: 11px;">{{ Auth::user()->role }}</small>
                         </div>
                     </a>
+
+                    <!-- Form Logout POST dengan Tombol Ikon Logof -->
+                    <form action="{{ route('logout') }}" method="POST" class="m-0">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-outline-danger p-1 lh-1" title="Keluar Sistem">
+                            <i class="bi bi-box-arrow-right fs-6"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
 
